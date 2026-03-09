@@ -341,3 +341,42 @@ def GTConvFuse_inference_tiling(
     )
 
     return out_feat[0]
+
+
+def GTConvFuse_hyper_backward(
+    rows,
+    row_ptr,
+    col_ind,
+    val,
+    col_ptr,
+    row_ind,
+    val_idx,
+    smem_consume,
+    Q,
+    K,
+    V,
+    grad_out,
+    attn_edge,
+):
+    grad_out = grad_out.contiguous()
+    grad_Q, grad_K, grad_V = fused_gt.gt_backward(
+        row_ptr,
+        col_ind,
+        rows,
+        val,
+        col_ptr,
+        row_ind,
+        val_idx,
+        smem_consume,
+        Q,
+        K,
+        V,
+        attn_edge,
+        grad_out,
+    )
+
+    return (
+        grad_Q,
+        grad_K,
+        grad_V,
+    )
